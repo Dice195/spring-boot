@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>업로드테스트</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(function(){
+	$('input[name=fImg]').change((e)=>{
+		//alert("이미지변경됨");
+		console.log(e.target.files[0])
+		let imgFile = e.target.files[0]
+		let strBlob = URL.createObjectURL(imgFile)
+		console.log(strBlob)		
+		$('div.showImg>img').attr('src', strBlob)
+	});
+	//--첨부파일 다운로드 클릭이벤트 START--
+	$('div.download>a').click(()=>{
+		location.href='../download?fileName=a.txt'
+		return false
+	})
+	//--첨부파일 다운로드 클릭이벤트 START--
+	
+	//--이미지보기 버튼 클릭이벤트 START--
+	$('div.download>button').click(()=>{
+		//location.href='../download?fileName=a.jpg'
+		$.ajax({
+			xhrFields:{
+				withCredential : true,
+				responseType: 'blob'
+			},
+			cache: false,
+			url : '../download',
+			data : 'fileName=a.jpg',
+			success: function(blob){
+				let strBlob = URL.createObjectURL(blob)
+				$('div.download>img').attr('src', strBlob)
+			}
+		})
+		return false
+	})
+	//--이미지보기 버튼 클릭이벤트 END--
+	
+	
+})
+</script>
+</head>
+<body>
+<h2>업로드 테스트</h2>
+<form method="post" enctype="multipart/form-data" action="../upload">
+<input type="file" multiple name="f" ><br>
+<fieldset>
+  <legend>이미지파일</legend>
+  <input type="file" name="fImg" accept="image/*">
+</fieldset>
+
+<!-- 이미지파일이 선택되자마자 그 이미지가 보여질 영역 -->
+<div class="showImg" style="height:100px; border:1px dotted">
+  <img style="max-height:100%; width:auto;">
+</div>
+
+<input type="text" name="t" value="테스트"><br>
+<input type="submit" value="전송">  
+</form>
+
+
+<h2>다운로드 테스트</h2>
+<div class="download">
+  <a href="#">첨부파일다운로드</a><br>
+  
+  <button>이미지보기</button>
+  <img style="max-height:100%; width:auto;">
+</div>
+
+
+</body>
+</html>

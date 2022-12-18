@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+</settings>
+<typeAliases>
+  <typeAlias type="com.my.vo.RepBoard" alias="RepBoard"/>
+  <typeAlias type="com.my.vo.OrderLine" alias="OrderLine"/>
+  <typeAlias type="com.my.vo.OrderInfo" alias="OrderInfo"/>
+  
+</typeAliases>
+  <mappers>
+   <mapper resource="RepBoardMapper.xml"/>
+    <mapper resource="OrderMapper.xml"/>
+  </mappers>
+</configuration>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.mybatis.RepBoardMapper">
+  <select id="selectByBoardNo" resultType="RepBoard" parameterType="int">
+   	SELECT rb.*, c.name, rb.board_id "boardC.id" 
+   	FROM rep_board rb JOIN CUSTOMER c ON rb.board_id = c.id 
+   	WHERE board_no = #{boardNo}  
+  </select>
+  <select id="selectAll" resultType="RepBoard">
+ 		SELECT level, rb.*, c.name "boardC.name" ,rb.board_id "boardC.id"
+	FROM rep_board rb JOIN CUSTOMER c ON rb.board_id = c.id 
+	START WITH parent_no = 0 CONNECT BY PRIOR board_no = parent_no 
+	ORDER SIBLINGS BY board_no DESC
+  </select>
+  <select id="selectAllPage" resultType="RepBoard">
+	SELECT * FROM 
+	(SELECT rownum rn , a.* 
+	FROM (
+	SELECT level, rb.*, c.name "boardC.name" ,rb.board_id "boardC.id"
+	FROM rep_board rb JOIN CUSTOMER c ON rb.board_id = c.id 
+	START WITH parent_no = 0 
+	CONNECT BY PRIOR board_no = parent_no 
+	ORDER SIBLINGS BY board_no DESC ) a
+	)WHERE rn BETWEEN #{startRow} AND #{endRow}
+  </select>
+  <select id="selectCount" resultType="int" >
+	SELECT count(*) 
+	FROM rep_board
+  </select>
+  <insert id="insert" parameterType="RepBoard">
+  <selectKey keyProperty="boardNo" resultType="int" order="AFTER" >
+  	SELECT rep_board_seq.CURRVAL from dual
+  </selectKey>
+	INSERT INTO rep_board(board_no, parent_no, board_title, board_id, board_content)
+	VALUES(rep_board_seq.NEXTVAL, #{parentNo}, #{boardTitle}, #{boardC.id}, #{boardContent})
+  </insert>
+  <update id="updateViewCnt" parameterType="int">
+  	UPDATE rep_board SET board_view_cnt = board_view_cnt + 1 
+  	WHERE board_no = #{boardNo}
+  </update>
+  <update id="update" parameterType="RepBoard" >
+  	UPDATE rep_board
+  	<set>
+    	<if test ="boardTitle != null">
+       		board_title=#{boardTitle},
+    	</if>
+    	<if test ="boardContent != null">
+        	board_Content=#{boardContent}
+    	</if>
+	</set>
+	WHERE board_no=#{boardNo} AND board_id=#{boardC.id}
+  </update>
+  <delete id="delete" >
+  	DELETE rep_board WHERE board_no 
+  	IN(SELECT board_no FROM rep_board 
+	START WITH board_no = #{boardNo} 
+	CONNECT BY PRIOR board_no = parent_no)
+  </delete>
+
+</mapper>

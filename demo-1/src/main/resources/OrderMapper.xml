@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.mybatis.OrderMapper">
+	<resultMap id="OrderInfoResultMap" type="OrderInfo" autoMapping="true">
+		<id property="orderNo"  column="order_no"/>
+		<association property="orderC" javaType="com.my.vo.Customer">
+			<result property="id" column="order_id"/>
+		</association>
+		<collection property="lines" ofType="OrderLine" autoMapping="true">
+			<association property="orderp" javaType="com.my.vo.Product" autoMapping="true">
+			<result property="prodNo" column="order_prod_no"/>
+			</association>
+		</collection>		
+	</resultMap>
+
+</mapper>
+
+
+ 	<!-- <insert id="insertInfo" parameterType="string">
+ 	INSERT INTO order_info(order_no, order_id , order_dt)
+	VALUES (order_seq.NEXTVAL, #{orderId}, SYSDATE)
+ 	</insert>
+ 	<insert id="insertLine" parameterType="OrderLine">
+ 	INSERT INTO order_line(order_no, order_prod_no, order_quantity)
+	VALUES (order_seq.CURRVAL, #{orderp.prodNo},#{orderQuantity})
+	</insert>
+	<select id="selectById" parameterType="string" resultMap="OrderInfoResultMap">
+	SELECT info.*,
+	line.order_prod_no, line.order_quantity,
+	p.prod_name, p.prod_price, p.prod_info
+	FROM order_info info 
+	JOIN order_line line ON (info.order_no = line.order_no)
+	JOIN product p ON (line.order_prod_no = p.prod_no)
+	WHERE order_id = #{orderId}
+	ORDER BY info.order_no DESC	
+	</select> -->
